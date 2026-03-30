@@ -28,7 +28,6 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings.prod
       - SECRET_KEY=nexuscrm-secret-key-2024-production
-      - DEBUG=True
       - DB_HOST=db
       - DB_NAME=crm_db
       - DB_USER=crm_user

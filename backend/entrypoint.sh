@@ -29,11 +29,8 @@ except Exception as e:
 done
 echo "PostgreSQL is ready!"
 
-echo "Running makemigrations..."
-python manage.py makemigrations --noinput 2>&1 || echo "makemigrations warning (continuing)"
-
 echo "Running migrate..."
-python manage.py migrate --noinput 2>&1 || echo "migrate warning (continuing)"
+python manage.py migrate --noinput 2>&1
 
 echo "Seeding CRM..."
 python manage.py seed_crm 2>&1 || echo "Seed warning (may already exist)"
