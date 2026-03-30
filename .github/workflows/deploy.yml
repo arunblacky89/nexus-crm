@@ -50,19 +50,17 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Make packages public
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           for pkg in nexus-crm-backend nexus-crm-frontend; do
-            curl -s -X PATCH \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            echo "Setting $pkg to public..."
+            gh api \
+              --method PATCH \
               -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/orgs/arunblacky89/packages/container/$pkg" \
-              -d '{"visibility":"public"}' || \
-            curl -s -X PATCH \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/user/packages/container/$pkg" \
-              -d '{"visibility":"public"}'
-            echo "$pkg visibility update attempted"
+              "/user/packages/container/$pkg" \
+              -f visibility=public \
+              && echo "$pkg → public OK" || echo "$pkg → failed (may need PAT)"
           done
 
   deploy:
