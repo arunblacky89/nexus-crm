@@ -1,9 +1,9 @@
 #!/bin/sh
-set -e
 
 echo "=== NexusCRM Backend Starting ==="
 
 echo "Waiting for PostgreSQL..."
+RETRIES=30
 until python -c "
 import psycopg2, os, sys
 try:
@@ -18,8 +18,13 @@ try:
 except Exception as e:
     print(f'DB not ready: {e}')
     sys.exit(1)
-"; do
-  echo "DB not ready, retrying in 3s..."
+" 2>&1; do
+  RETRIES=$((RETRIES - 1))
+  if [ $RETRIES -le 0 ]; then
+    echo "ERROR: DB never became ready. Exiting."
+    exit 1
+  fi
+  echo "DB not ready, retrying in 3s... ($RETRIES left)"
   sleep 3
 done
 echo "PostgreSQL is ready!"
@@ -28,13 +33,13 @@ echo "Running makemigrations..."
 python manage.py makemigrations --noinput 2>&1 || echo "makemigrations warning (continuing)"
 
 echo "Running migrate..."
-python manage.py migrate --noinput 2>&1
+python manage.py migrate --noinput 2>&1 || echo "migrate warning (continuing)"
 
 echo "Seeding CRM..."
 python manage.py seed_crm 2>&1 || echo "Seed warning (may already exist)"
 
 echo "Collecting static files..."
-python manage.py collectstatic --noinput 2>&1
+python manage.py collectstatic --noinput 2>&1 || echo "collectstatic warning (continuing)"
 
 echo "=== Starting Gunicorn on 0.0.0.0:8000 ==="
 exec gunicorn config.wsgi:application \
