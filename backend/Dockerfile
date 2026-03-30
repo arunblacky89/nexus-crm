@@ -21,4 +21,4 @@ RUN sed -i 's/\r//' /entrypoint.sh && chmod +x /entrypoint.sh
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "echo 'Container started OK' && python -c 'import django; print(django.__version__)' && sleep 3600"]
+CMD ["sleep", "3600"]
