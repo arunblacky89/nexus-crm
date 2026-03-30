@@ -42,8 +42,8 @@ services:
       - DB_USER=crm_user
       - DB_PASSWORD=crm_pass
       - REDIS_URL=redis://redis:6379/0
-      - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
-      - CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:80
+      - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0,crm.ogts.in
+      - CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:80,https://crm.ogts.in
     ports:
       - "8000:8000"
     volumes:
